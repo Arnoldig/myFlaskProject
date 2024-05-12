@@ -13,12 +13,13 @@
         </ul>
 
     {% block content %}
-        <p>Этот текст добавлен в блок base.html внутрь контейнера.</p>
-    {% endblock %}
-
-    <img src="{{ url_for('static', filename='img/rik.png') }}"
+        <p>Этот текст добавлен в файл base.html внутрь контейнера.</p>
+        <img src="{{ url_for('static', filename='img/rik.png') }}"
          alt="Рik"
          width="150"
          height="150">
+    {% endblock %}
+
+
     </body>
 </html>
