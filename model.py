@@ -1,14 +1,18 @@
 from main import db, app
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash
 
 
-class Message(db.Model):
+class DataBase(db.Model):
+    __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
+
+
+class Message(DataBase):
     name = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(50), unique=True)
     msg = db.Column(db.Text, nullable=True)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<Message {self.id}>'
@@ -20,15 +24,14 @@ class Message(db.Model):
             db.session.add(m)
             db.session.commit()
         except Exception as e:
-            print('Ошибка класса Message: данные не добавлены в БД')
+            print(f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
             print(f'Описание ошибки: {e}')
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class User(DataBase):
     email = db.Column(db.String(50), unique=True)
     psw = db.Column(db.String(500), nullable=True)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -41,7 +44,7 @@ class User(db.Model):
             db.session.commit()
             return u.id
         except Exception as e:
-            print('Ошибка класса User: данные не добавлены в БД')
+            print(f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
             print(f'Описание ошибки: {e}')
 
 
@@ -49,8 +52,7 @@ class WriteError(Exception):
     pass
 
 
-class Profiles(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class Profiles(DataBase):
     name = db.Column(db.String(50), nullable=True)
     old = db.Column(db.Integer)
     city = db.Column(db.String(100))
@@ -72,7 +74,7 @@ class Profiles(db.Model):
         except WriteError:
             print(("Нет id из таблицы User"))
         except Exception as e:
-            print('Ошибка класса Profiles: данные не добавлены в БД')
+            print(f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
             print(f'Описание ошибки: {e}')
 
 
