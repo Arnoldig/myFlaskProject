@@ -1,12 +1,7 @@
 from flask import render_template, request, make_response, session
 from main import app
 from model import User, Profiles, Message
-
-menu = {'/': 'Главная страница сайта',
-        '/about': 'О нас',
-        '/contact': 'Обратная связь',
-        '/registration': 'Регистрация',
-        }
+from const import SITEMENU
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -26,13 +21,13 @@ def registration():
 
     return render_template('registration.html',
                            title='Регистрация новых пользователей',
-                           menu=menu)
+                           menu=SITEMENU)
 
 
 @app.route('/index')
 @app.route('/')
 def index():
-    session.permanent = True # указываем браузеру что сессию нужно сохранить
+    session.permanent = True  # указываем браузеру что сессию нужно сохранить
     if 'visits' in session:
         session['visits'] = session.get('visits') + 1
     else:
@@ -46,14 +41,14 @@ def index():
 
     return render_template('index.html',
                            title='О сайте!',
-                           menu=menu,
+                           menu=SITEMENU,
                            visits=session['visits'], data=session['data'])
 
 
 @app.route('/about')
 def about():
     content = render_template('about.html', title='О нас!',
-                              menu=menu)
+                              menu=SITEMENU)
     res = make_response(content, 200)
     res.headers['Content-Type'] = 'text/html'
     res.headers['Server'] = 'flask'
@@ -69,7 +64,7 @@ def page_not_found(error):
     text = f'<p>logged_key: {log} </p>'
     content = render_template('404.html',
                               title='Страницы не существует!',
-                              menu=menu,
+                              menu=SITEMENU,
                               cookie=text)
 
     res = make_response(content, 404)
@@ -89,4 +84,4 @@ def contact():
                            msg=request.form['message'])
 
     return render_template('contact.html',
-                           title='Обратная связь', menu=menu)
+                           title='Обратная связь', menu=SITEMENU)

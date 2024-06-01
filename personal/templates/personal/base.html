@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <h1>{{ title }}</h1>
+        <ul>
+            {% for key, elm in menu.items() %}
+                <li> <a href="{{ key }}"> {{ elm }} </a> </li>
+            {% endfor %}
+        </ul>
+
+    {% block content %}
+        <p>Этот текст добавлен в файл base.html внутрь контейнера.</p>
+        <img src="{{ url_for('static', filename='img/rik.png') }}"
+         alt="Рik"
+         width="150"
+         height="150">
+    {% endblock %}
+
+
+    </body>
+</html>
