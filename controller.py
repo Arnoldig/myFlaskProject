@@ -1,5 +1,5 @@
-from flask import render_template, request, make_response, session, redirect, \
-    url_for, flash
+from flask import (render_template, request, make_response, session, redirect,
+                   url_for, flash)
 from main import app
 from model import User, Profiles, Message, check_login
 from const import SITEMENU
