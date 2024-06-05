@@ -1,6 +1,6 @@
 from main import db, app
 from datetime import datetime, timezone
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class DataBase(db.Model):
@@ -24,7 +24,8 @@ class Message(DataBase):
             db.session.add(m)
             db.session.commit()
         except Exception as e:
-            print(f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
+            print(
+                f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
             print(f'Описание ошибки: {e}')
 
 
@@ -44,8 +45,15 @@ class User(DataBase):
             db.session.commit()
             return u.id
         except Exception as e:
-            print(f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
+            print(
+                f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
             print(f'Описание ошибки: {e}')
+
+def check_login(email: str, psw: str) -> bool:
+    check_user = User.query.filter_by(email=email).first()
+    if check_user is None:
+        return False
+    return check_password_hash(check_user.psw, psw)
 
 
 class WriteError(Exception):
@@ -74,7 +82,8 @@ class Profiles(DataBase):
         except WriteError:
             print(("Нет id из таблицы User"))
         except Exception as e:
-            print(f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
+            print(
+                f'Ошибка {self.__class__.__name__}: данные не добавлены в БД')
             print(f'Описание ошибки: {e}')
 
 

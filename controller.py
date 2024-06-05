@@ -1,6 +1,7 @@
-from flask import render_template, request, make_response, session
+from flask import render_template, request, make_response, session, redirect, \
+    url_for, flash
 from main import app
-from model import User, Profiles, Message
+from model import User, Profiles, Message, check_login
 from const import SITEMENU
 
 
@@ -24,10 +25,35 @@ def registration():
                            menu=SITEMENU)
 
 
+@app.route('/authorization', methods=['GET', 'POST'])
+def authorization():
+    if 'userLogged' in session:
+        return redirect(url_for('app_pers.personal_site'))
+
+    if request.method != 'POST':
+        return render_template('authorization.html',
+                               title='Авторизация пользователей',
+                               menu=SITEMENU)
+
+    if check_login(request.form['email'], request.form['password']):
+        session.permanent = True  # указываем браузеру что сессию сохраняем
+        session['userLogged'] = request.form['email']  # запись в куки
+        return redirect(url_for('app_pers.personal_site'))
+    else:
+        flash({
+            'title': "Неверный логин или пароль",
+            'message': "Попробуйте ещё раз ввести логин и пароль"},
+            'error')
+
+    return render_template('authorization.html',
+                           title='Авторизация пользователей',
+                           menu=SITEMENU)
+
+
 @app.route('/index')
 @app.route('/')
 def index():
-    session.permanent = True  # указываем браузеру что сессию нужно сохранить
+    session.permanent = True  # указываем браузеру что сессию сохраняем
     if 'visits' in session:
         session['visits'] = session.get('visits') + 1
     else:
@@ -47,7 +73,8 @@ def index():
 
 @app.route('/about')
 def about():
-    content = render_template('about.html', title='О нас!',
+    content = render_template('about.html',
+                              title='О нас!',
                               menu=SITEMENU)
     res = make_response(content, 200)
     res.headers['Content-Type'] = 'text/html'
